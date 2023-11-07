@@ -71,7 +71,7 @@ if pydantic is not None:
             return value.dict() if value else None
 
         def process_result_value(self, value, dialect) -> _P | None:
-            return None if value is None else pydantic.parse_obj_as(self.pydantic_type, value)
+            return TypeAdapter(self.pydantic_type).validate_python(value) if value else None
 
     class MutablePydanticBaseModel(TrackedPydanticBaseModel, Mutable):
         @classmethod
