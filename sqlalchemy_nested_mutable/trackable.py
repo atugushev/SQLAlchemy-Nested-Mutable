@@ -44,7 +44,7 @@ class TrackedObject:
                 f"This class is composed of `{val.__class__.__name__}` and `TrackedPydanticBaseModel` "
                 "to make it trackable in nested context."
             )
-            new_val = model_cls.parse_obj(val.dict())  # type: ignore
+            new_val = model_cls.model_validate(val.model_dump())  # type: ignore
 
         if isinstance(new_val, cls):
             parents_track[id(new_val)] = parent
@@ -200,7 +200,7 @@ if pydantic is not None:
     class TrackedPydanticBaseModel(TrackedObject, Mutable, pydantic.BaseModel):
         @classmethod
         def coerce(cls, key, value):
-            return value if isinstance(value, cls) else cls.parse_obj(value)
+            return value if isinstance(value, cls) else cls.model_validate(value)
 
         def __init__(self, **data):
             super().__init__(**data)

@@ -12,7 +12,7 @@ PG_PORT = "5432/tcp"
 pg_container = docker_container(
     scope="session",
     image_name="postgres:15",
-    container_name=f"pytest-svc-pg15-{random.randint(0, 1e8)}",
+    container_name=f"pytest-svc-pg15-{random.randint(0, 10000008)}",
     ports={PG_PORT: None},
     environment={
         "POSTGRES_USER": "test",

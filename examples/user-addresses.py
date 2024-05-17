@@ -48,8 +48,8 @@ with Session(engine) as s:
     s.commit()
     assert u.addresses.preferred.street == "bar2"
 
-    u.addresses.others.append(Addresses.AddressItem.parse_obj({"street": "bar3", "city": "baz3"}))
+    u.addresses.others.append(Addresses.AddressItem.model_validate({"street": "bar3", "city": "baz3"}))
     s.commit()
     assert isinstance(u.addresses.others[0], Addresses.AddressItem)
 
-    print(u.addresses.dict())
+    print(u.addresses.model_dump())

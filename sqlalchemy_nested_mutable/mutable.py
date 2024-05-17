@@ -68,7 +68,7 @@ if pydantic is not None:
             return f'PydanticType({self.pydantic_type.__name__})'
 
         def process_bind_param(self, value, dialect):
-            return value.dict() if value else None
+            return value.model_dump() if value else None
 
         def process_result_value(self, value, dialect) -> _P | None:
             return None if value is None else pydantic.TypeAdapter(self.pydantic_type).validate_python(value)
@@ -76,10 +76,10 @@ if pydantic is not None:
     class MutablePydanticBaseModel(TrackedPydanticBaseModel, Mutable):
         @classmethod
         def coerce(cls, key, value) -> Self:
-            return value if isinstance(value, cls) else cls.parse_obj(value)
+            return value if isinstance(value, cls) else cls.model_validate(value)
 
         def dict(self, *args, **kwargs):
-            res = super().dict(*args, **kwargs)
+            res = super().model_dump(*args, **kwargs)
             res.pop('_parents', None)
             return res
 
