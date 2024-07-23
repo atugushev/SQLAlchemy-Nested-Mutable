@@ -1,6 +1,8 @@
 from __future__ import annotations
 
+from datetime import datetime
 from typing import TYPE_CHECKING, List, Iterable, TypeVar
+from uuid import UUID
 from typing_extensions import Self
 
 import sqlalchemy as sa
@@ -12,6 +14,21 @@ from ._typing import _T
 from ._compat import pydantic
 
 _P = TypeVar("_P", bound='MutablePydanticBaseModel')
+
+# HACK: Monkey-patch JSONEncoder to handle UUID and datetime objects
+from json import JSONEncoder
+
+base_encoder = JSONEncoder.default
+    
+def stringify_by_type(self, obj):
+    if isinstance(obj, UUID):
+        return str(obj)
+    if isinstance(obj, datetime):
+        return obj.isoformat()    
+    return base_encoder(self, obj)
+
+
+JSONEncoder.default = stringify_by_type
 
 
 class MutableList(TrackedList, Mutable, List[_T]):

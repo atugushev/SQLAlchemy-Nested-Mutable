@@ -6,6 +6,8 @@ from sqlalchemy.orm import (
     Mapped,
     mapped_column,
 )
+from datetime import datetime
+import uuid
 
 from sqlalchemy_nested_mutable import MutableDict, TrackedDict, TrackedList
 
@@ -36,6 +38,8 @@ def test_mutable_dict(session):
     session.add(u := User(name="foo", addresses={
         "home": {"street": "123 Main Street", "city": "New York"},
         "work": "456 Wall Street",
+        "updated_at": datetime.now(),
+        "uuid": uuid.uuid4()
     }))
     session.commit()
 
